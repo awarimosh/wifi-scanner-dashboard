@@ -9,11 +9,11 @@ export default class Sensors extends Component {
   render() {
     const rows = this.props.sensors.map((_, i) => (
       <TableRow key={i}>
-        <TableColumn>{_.deviceID}</TableColumn>
-        <TableColumn>{_.deviceName}</TableColumn>
-        <TableColumn>{_.zoneID}</TableColumn>
-        <TableColumn>{_.deviceDescription}</TableColumn>
-        <TableColumn>{_.deviceLocation}</TableColumn>
+        <TableColumn>{_.ID}</TableColumn>
+        <TableColumn>{_.Name}</TableColumn>
+        <TableColumn>{_.ZoneID}</TableColumn>
+        <TableColumn>{_.Description}</TableColumn>
+        <TableColumn>{_.Location}</TableColumn>
       </TableRow>
     ));
 

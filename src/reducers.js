@@ -9,6 +9,8 @@ import {
   RECEIVE_SENSORS,
   REQUEST_MACS,
   RECEIVE_MACS,
+  REQUEST_VISITORS,
+  RECEIVE_VISITORS,
   SELECT_SUBURL
 } from './actions'
 
@@ -34,7 +36,7 @@ function selectedSuburl(state = 'reactjs', action) {
     case REQUEST_MACS:
       action.suburl = "macs";
       return action.suburl
-    
+
     default:
       return state
   }
@@ -102,7 +104,7 @@ function sensors(
   }
 }
 
-function macs(
+function data(
   state = {
     isFetching: false,
     didInvalidate: false,
@@ -110,6 +112,7 @@ function macs(
   },
   action
 ) {
+  var obj;
   switch (action.type) {
     case INVALIDATE_SUBURL:
       return Object.assign({}, state, {
@@ -121,10 +124,23 @@ function macs(
         didInvalidate: false
       })
     case RECEIVE_MACS:
-      var obj = Object.assign(state, {
+      obj = Object.assign(state, {
         isFetching: false,
         didInvalidate: false,
         items: action.macs,
+        lastUpdated: action.receivedAt
+      })
+      return obj
+    case REQUEST_VISITORS:
+      return Object.assign({}, state, {
+        isFetching: true,
+        didInvalidate: false
+      })
+    case RECEIVE_VISITORS:
+      obj = Object.assign(state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.visitors,
         lastUpdated: action.receivedAt
       })
       return obj
@@ -132,7 +148,6 @@ function macs(
       return state
   }
 }
-
 
 function postsBySublog(state = {}, action) {
   switch (action.type) {
@@ -159,7 +174,12 @@ function postsBySuburl(state = {}, action) {
     case REQUEST_MACS:
     case RECEIVE_MACS:
       return Object.assign({}, state, {
-        [action.suburl]: macs(state[action.suburl], action)
+        [action.suburl]: data(state[action.suburl], action)
+      })
+    case REQUEST_VISITORS:
+    case RECEIVE_VISITORS:
+      return Object.assign({}, state, {
+        [action.suburl]: data(state[action.suburl], action)
       })
     default:
       return state

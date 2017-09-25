@@ -2,18 +2,23 @@ import fetch from 'isomorphic-fetch'
 
 export const REQUEST_LOGS = 'REQUEST_LOGS'
 export const RECEIVE_LOGS = 'RECEIVE_LOGS'
+
 export const SELECT_SUBLOGS = 'SELECT_SUBLOGS'
 export const INVALIDATE_SUBLOGS = 'INVALIDATE_SUBLOGS'
 
 export const REQUEST_SENSORS = 'REQUEST_SENSORS'
 export const RECEIVE_SENSORS = 'RECEIVE_SENSORS'
+
 export const SELECT_SUBURL = 'SELECT_SUBURL'
 export const INVALIDATE_SUBURL = 'INVALIDATE_SUBURL'
 
 export const REQUEST_MACS = 'REQUEST_MACS'
 export const RECEIVE_MACS = 'RECEIVE_MACS'
 
-const baseURL = "http://localhost:3006";
+export const REQUEST_VISITORS = 'REQUEST_VISITORS'
+export const RECEIVE_VISITORS = 'RECEIVE_VISITORS'
+// const baseURL = "http://localhost:3030";
+const baseURL = "http://128.199.154.60:3030";
 
 function requestSuburl(suburl, type) {
   switch (type) {
@@ -177,7 +182,7 @@ function receiveMacs(suburl, json) {
 function fetchMacs(suburl, value) {
   if (value === undefined) {
     value = {};
-    value.sensorID = 2845;
+    value.sensorID = 2844;
     value.startDate = new Date().setHours(0, 0, 0, 0) / 1000 - 86400;
     value.endDate = Date.now() / 1000 + 86400 + 86400;
   }
@@ -190,7 +195,6 @@ function fetchMacs(suburl, value) {
 }
 
 export function fetchMacsIfNeeded(suburl, value) {
-  suburl = 'macs'
   return (dispatch, getState) => {
     // if (shouldFetchMacs(getState(), suburl)) {
     return dispatch(fetchMacs(suburl, value))
@@ -198,9 +202,36 @@ export function fetchMacsIfNeeded(suburl, value) {
   }
 }
 
-export function setParams(values) {
-  return {
-    type: REQUEST_MACS,
-    params: values
+////// visitors
+function receiveVisitors(suburl, json) {
+  var obj = {
+    type: RECEIVE_VISITORS,
+    suburl,
+    visitors: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchVisitors(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.week = 37;
+    value.year = 2017;
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/visitors/?sensors=${value.sensors}&week=${value.week}&year=${value.year}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveVisitors(suburl, json.response)))
+  }
+}
+
+export function fetchVisitorsIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    // if (shouldFetchMacs(getState(), suburl)) {
+    return dispatch(fetchVisitors(suburl, value))
+    // }
   }
 }

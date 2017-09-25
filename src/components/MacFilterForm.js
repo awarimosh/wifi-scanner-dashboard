@@ -4,23 +4,43 @@ import Subheader from 'react-md/lib/Subheaders';
 import { connect } from 'react-redux'
 import {
     invalidateSuburl,
-    fetchMacsIfNeeded
+    fetchMacsIfNeeded,
+    fetchSensorsIfNeeded
 } from '../actions'
 import Picker from './Picker'
+import Mac from './Macs'
 
 class MacFilterForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sensorID: '2844',
-            endDate: Date.now() / 1000 + 86400 + 86400,
-            startDate: new Date().setHours(0, 0, 0, 0) / 1000 - 86400
+            endDate: new Date().setHours(0, 0, 0, 0) / 1000 + 86400 + 86400,
+            startDate: new Date().setHours(0, 0, 0, 0) / 1000 - 86400,
+            selectedDate: new Date().setHours(0, 0, 0, 0) / 1000
         };
         this.handleChange = this.handleChange.bind(this)
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleRefreshClick = this.handleRefreshClick.bind(this);
     }
+
+    componentDidMount() {
+        const { dispatch } = this.props
+        var values = {
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            sensorID: this.state.sensorID,
+            selectedDate: this.state.selectedDate,
+        }
+        dispatch(fetchMacsIfNeeded('macs', values))
+        dispatch(fetchSensorsIfNeeded('sensors'))
+    }
+
+    componentWillUnmount() {
+
+    }
+    
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -38,26 +58,24 @@ class MacFilterForm extends Component {
         var values = {
             startDate: this.state.startDate,
             endDate: this.state.endDate,
-            sensorID: input
+            sensorID: input,
+            selectedDate: this.state.selectedDate,
         }
         this.props.dispatch(fetchMacsIfNeeded('macs', values))
     }
 
     handleDateChange(input) {
-        input = Date.parse(input) / 1000
-        if (input > this.state.endDate) {
-            alert("date must be today or less");
+        input = Date.parse(input) / 1000;
+        this.setState({ startDate: input - 86400 })
+        this.setState({ endDate: input + 86400 + 86400 })
+        this.setState({ selectedDate: input })
+        var values = {
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            sensorID: this.state.sensorID,
+            selectedDate: this.state.selectedDate
         }
-        else {
-            this.setState({ startDate: input - 86400 })
-            this.setState({ endDate: input + 86400 + 86400 })
-            var values = {
-                startDate: this.state.startDate,
-                endDate: this.state.endDate,
-                sensorID: this.state.sensorID
-            }
-            this.props.dispatch(fetchMacsIfNeeded('macs', values))
-        }
+        this.props.dispatch(fetchMacsIfNeeded('macs', values))
     }
 
     handleRefreshClick(e) {
@@ -76,7 +94,7 @@ class MacFilterForm extends Component {
             'marginLeft': '50px'
         };
         const today = new Date();
-        const { macs } = this.props
+        const { macs, sensors } = this.props
 
         function getPrevious(input, props) {
             var prev = []
@@ -85,7 +103,7 @@ class MacFilterForm extends Component {
                     prev.push(element)
                 }
             }, this);
-            return prev.length;
+            return prev;
         }
         function getNext(input, props) {
             var next = []
@@ -94,7 +112,7 @@ class MacFilterForm extends Component {
                     next.push(element)
                 }
             }, this);
-            return next.length;
+            return next;
         }
         function getCurrent(input, props) {
             var next = []
@@ -103,7 +121,7 @@ class MacFilterForm extends Component {
                     next.push(element)
                 }
             }, this);
-            return next.length;
+            return next;
         }
         return (
             <div style={divStyle}>
@@ -117,7 +135,7 @@ class MacFilterForm extends Component {
                     />
                     <Picker className="md-cell md-cell-4 md-cell-middle"
                         onChange={this.handleChange}
-                        options={[{ ID: '2844', Name: "	SureTouch 01" }, { ID: '2845', Name: "SureTouch 02" }, { ID: '2846', Name: "SureTouch 03" }]}
+                        options={sensors}
                     />
 
                 </div>
@@ -133,14 +151,18 @@ class MacFilterForm extends Component {
                         <Subheader primary primaryText="Visitor Per sensor (Next)" />
                     </div>
                     <div className="md-cell md-cell-4">
-                        <h3 style={headerStyle}>{getPrevious(macs, this.state)}</h3>
+                        <h3 style={headerStyle}>{getPrevious(macs, this.state).length}</h3>
                     </div>
                     <div className="md-cell md-cell-4">
-                        <h3 style={headerStyle}>{getCurrent(macs, this.state)}</h3>
+                        <h3 style={headerStyle}>{getCurrent(macs, this.state).length}</h3>
                     </div>
                     <div className="md-cell md-cell-4">
-                        <h3 style={headerStyle}>{getNext(macs, this.state)}</h3>
+                        <h3 style={headerStyle}>{getNext(macs, this.state).length}</h3>
                     </div>
+                </div>
+
+                <div className="md-grid" style={divStyle}>
+                    <Mac macs={getCurrent(macs, this.state)} />
                 </div>
             </div>
         );
@@ -148,7 +170,7 @@ class MacFilterForm extends Component {
 }
 
 function mapStateToProps(state) {
-    const { selectedSuburl, postsBySuburl } = state
+    const { selectedSuburl, postsBySuburl, sensorID, selectedDate } = state
     const {
     isFetching,
         lastUpdated,
@@ -157,11 +179,20 @@ function mapStateToProps(state) {
             isFetching: true,
             items: []
         }
+    const {
+        items: sensors
+  } = postsBySuburl['sensors'] || {
+            items: []
+        }
+    console.log('sensors', sensors)
     return {
         selectedSuburl,
         macs,
         isFetching,
-        lastUpdated
+        lastUpdated,
+        sensorID,
+        selectedDate,
+        sensors,
     }
 }
 

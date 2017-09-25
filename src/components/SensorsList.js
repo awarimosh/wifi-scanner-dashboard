@@ -7,6 +7,7 @@ import {
 } from '../actions'
 import Sensors from './Sensors'
 import SensorForm from './SensorForm'
+import MapContainer from './MapContainer'
 
 class SensorsList extends Component {
   constructor(props) {
@@ -41,29 +42,41 @@ class SensorsList extends Component {
 
   render() {
     const { isFetching, lastUpdated, sensors } = this.props
+    const mapstyle = {
+      height: '100%',
+      width: '100%',
+      position : 'relative'
+    }
     return (
       <div className="md-grid">
         <div className="md-cell--3">
           <SensorForm />
         </div>
         <div className="md-cell--9">
-          {isFetching && sensors.length === 0 && <h2>Loading....</h2>}
-          {!isFetching && sensors.length === 0 && <h2>Empty.</h2>}
-          {sensors.length > 0 &&
-            <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-              <p className="md-cell">
-                {lastUpdated &&
-                  <span>
-                    Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
+          <div className="md-grid" style={mapstyle}>
+            <MapContainer sensors={sensors} />
+          </div>
+          <div className="md-grid">
+            <div className="md-cell--12">
+              {isFetching && sensors.length === 0 && <h2>Loading....</h2>}
+              {!isFetching && sensors.length === 0 && <h2>Empty.</h2>}
+              {sensors.length > 0 &&
+                <div style={{ opacity: isFetching ? 0.5 : 1 }}>
+                  <p className="md-cell">
+                    {lastUpdated &&
+                      <span>
+                        Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
               {' '}
-                  </span>}
-                {!isFetching &&
-                  <a href="refresh" onClick={this.handleRefreshClick}>
-                    Refresh
+                      </span>}
+                    {!isFetching &&
+                      <a onClick={this.handleRefreshClick}>
+                        Refresh
             </a>}
-              </p>
-              <Sensors sensors={sensors} />
-            </div>}
+                  </p>
+                  <Sensors sensors={sensors} />
+                </div>}
+            </div>
+          </div>
         </div>
 
       </div>

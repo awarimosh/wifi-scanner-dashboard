@@ -125,7 +125,7 @@ export function selectSuburl(suburl) {
 export function invalidateSuburl(suburl) {
   return {
     type: INVALIDATE_SUBURL,
-    suburl
+    suburl,
   }
 }
 

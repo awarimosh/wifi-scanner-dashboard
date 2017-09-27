@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 // import PropTypes from 'prop-types'
 import {
-    invalidateSuburl,
     fetchVisitorsIfNeeded,
     fetchSensorsIfNeeded
 } from '../actions'
-import WeekPicker from "./WeekPicker"
+import WeekPicker from './WeekPicker'
+import VisitorRow from './VisitorRow'
 
 import moment from 'moment';
 const now = moment();
@@ -16,33 +16,37 @@ class Visitors extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sensors: 2845,
+            sensorIDs: "",
             week: parseInt(now && (now.format(format)).substr(5, 6), 10),
             year: parseInt(now && (now.format(format)).substr(0, 4), 10)
         };
-        this.handleRefreshClick = this.handleRefreshClick.bind(this);
     }
 
     componentDidMount() {
         const { dispatch } = this.props
-        var values = {
-            sensors: 2845,
-            week: this.state.week,
-            year: this.state.year
-        }
-        dispatch(fetchVisitorsIfNeeded('visitors', values))
-        dispatch(fetchSensorsIfNeeded('sensors'))
+        dispatch(fetchSensorsIfNeeded('sensors'));
     }
 
     componentWillUnmount() {
 
     }
 
-    handleRefreshClick(e) {
-        e.preventDefault()
-        const { dispatch, selectedSuburl } = this.props
-        dispatch(invalidateSuburl(selectedSuburl))
-        dispatch(fetchVisitorsIfNeeded(selectedSuburl, this.props))
+    componentDidUpdate(nextProps) {
+        if (this.props.sensors !== nextProps && this.props.sensors.length > 0 && this.props.visitors.length === 0 && nextProps.sensors.length === 0) {
+            const { dispatch } = this.props
+            var sensorIDs = this.props.sensors.map((sensor) => {
+                return sensor.ID
+            }).toString();
+            var values = {
+                sensors: sensorIDs,
+                week: this.state.week,
+                year: this.state.year
+            }
+            this.setState({
+                sensorIDs: sensorIDs
+            });
+            dispatch(fetchVisitorsIfNeeded('visitors', values));
+        }
     }
 
     getWeekPickerData = (data) => {
@@ -52,16 +56,15 @@ class Visitors extends Component {
         });
         const { dispatch } = this.props
         var values = {
-            sensors: '2845,2844',
-            week: this.state.week,
-            year: this.state.year
+            sensors: this.state.sensorIDs,
+            week: data.week,
+            year: data.year
         }
         dispatch(fetchVisitorsIfNeeded('visitors', values))
     }
 
     render() {
-
-        const { isFetching, lastUpdated, visitors } = this.props
+        const { isFetching, visitors } = this.props
         const style1 = {
             padding: '20px',
             alignSelf: 'center',
@@ -79,13 +82,13 @@ class Visitors extends Component {
                     <div className="md-cell--2" style={style1}>
                         previous week
                     <br />
-                    <br />
+                        <br />
                         {this.state.week - 1}
                     </div>
                     <div className="md-cell--2" style={style1}>
                         next week
                     <br />
-                    <br />
+                        <br />
                         {this.state.week + 1}
                     </div>
                 </div>
@@ -94,41 +97,12 @@ class Visitors extends Component {
                     padding: '10px'
                 }}>
                     Visitors
-                </div>
-                <div className="md-grid" style={{
-                    background: '#FF7043',
+                </div>                
+
+                <div style={{
                     margin: '10px'
                 }}>
-                    <div className="md-cell--2" style={{
-                        padding: '20px',
-                        alignSelf: 'center',
-                        textAlign: 'center'
-                    }}>
-                        average
-                        <br />
-                        (per sensor)
-                    </div>
-                    <div className="md-cell--2" style={style1}>
-                        {!isFetching &&
-                            <div>
-                                {visitors.thisweek[0].visitors}
-                            </div>}
-                    </div>
-                    <div className="md-cell--1" style={style1}>
-
-                    </div>
-                    <div className="md-cell--2" style={style1}>
-                        {!isFetching &&
-                            <div>
-                                {visitors.lastweek[0].visitors}
-                            </div>}
-                    </div>
-                    <div className="md-cell--2" style={style1}>
-                        {!isFetching &&
-                            <div>
-                                {visitors.nextweek[0].visitors}
-                            </div>}
-                    </div>
+                    <VisitorRow visitors={visitors} isFetching={isFetching}/>
                 </div>
             </div>
         );
@@ -138,8 +112,8 @@ class Visitors extends Component {
 function mapStateToProps(state) {
     const { selectedSuburl, postsBySuburl } = state
     const {
-    isFetching,
-        lastUpdated,
+        didInvalidate,
+        isFetching,
         items: visitors
   } = postsBySuburl['visitors'] || {
             isFetching: true,
@@ -151,10 +125,10 @@ function mapStateToProps(state) {
             items: []
         }
     return {
+        didInvalidate,
+        isFetching,
         selectedSuburl,
         visitors,
-        isFetching,
-        lastUpdated,
         sensors,
     }
 }

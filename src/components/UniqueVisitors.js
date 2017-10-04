@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 // import PropTypes from 'prop-types'
 import {
-    fetchVisitorsIfNeeded,
+    fetchUniqueVisitorsIfNeeded,
     fetchSensorsIfNeeded,
     invalidateSuburl
 } from '../actions'
@@ -13,7 +13,7 @@ import moment from 'moment';
 const now = moment();
 const format = 'YYYY-Wo';
 
-class Visitors extends Component {
+class UniqueVisitors extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,7 +25,7 @@ class Visitors extends Component {
     }
 
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch } = this.props;
         dispatch(fetchSensorsIfNeeded('sensors'));
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
@@ -39,14 +39,14 @@ class Visitors extends Component {
                 week: this.state.week,
                 year: this.state.year
             }
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values));
         }
     }
 
     componentDidUpdate(nextProps) {
-        const { dispatch } = this.props
+        const { dispatch } = this.props;
         var values;
-        if (this.props.sensors !== nextProps && this.props.sensors.length > 0 && this.props.visitors.length === 0 && nextProps.sensors.length === 0 && this.state.dateChanged) {
+        if (this.props.sensors !== nextProps && this.props.sensors.length > 0 && this.props.uniqueVisitors.length === 0 && nextProps.sensors.length === 0 && this.state.dateChanged) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID
             }).toString();
@@ -59,7 +59,7 @@ class Visitors extends Component {
                 sensorIDs: sensorIDs,
                 dateChanged: false
             });
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values));
         }
         else if (this.state.dateChanged && this.props.sensors.length > 0) {
             values = {
@@ -70,8 +70,8 @@ class Visitors extends Component {
             this.setState({
                 dateChanged: false
             });
-            dispatch(invalidateSuburl('visitors'));
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(invalidateSuburl('uniqueVisitors'));
+            dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values));
         }
     }
 
@@ -87,11 +87,11 @@ class Visitors extends Component {
             week: data.week,
             year: data.year
         }
-        dispatch(fetchVisitorsIfNeeded('visitors', values))
+        dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values))
     }
 
     render() {
-        const { isFetching, visitors, didInvalidate } = this.props
+        const { isFetching, uniqueVisitors } = this.props
         const style1 = {
             padding: '20px',
             alignSelf: 'center',
@@ -130,10 +130,9 @@ class Visitors extends Component {
                     margin: '10px'
                 }}>
 
-                    {isFetching && visitors.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching && didInvalidate && <h2>Fetching...</h2>}
-                    {!isFetching && !didInvalidate &&
-                        <VisitorRow visitors={visitors} isFetching={isFetching} />}
+                    {isFetching && uniqueVisitors.length === 0 && <h2>Loading...</h2>}
+                    {!isFetching &&
+                        <VisitorRow visitors={uniqueVisitors} isFetching={isFetching} />}
                 </div>
             </div>
         );
@@ -146,8 +145,8 @@ function mapStateToProps(state) {
     const {
         didInvalidate,
         isFetching,
-        items: visitors
-        } = postsBySuburl['visitors'] || {
+        items: uniqueVisitors
+        } = postsBySuburl['uniqueVisitors'] || {
             isFetching: true,
             items: []
         };
@@ -161,9 +160,9 @@ function mapStateToProps(state) {
         didInvalidate,
         isFetching,
         selectedSuburl,
-        visitors,
+        uniqueVisitors,
         sensors,
     }
 }
 
-export default connect(mapStateToProps)(Visitors)
+export default connect(mapStateToProps)(UniqueVisitors)

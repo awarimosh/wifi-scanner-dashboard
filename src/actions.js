@@ -17,6 +17,9 @@ export const RECEIVE_MACS = 'RECEIVE_MACS'
 
 export const REQUEST_VISITORS = 'REQUEST_VISITORS'
 export const RECEIVE_VISITORS = 'RECEIVE_VISITORS'
+
+export const REQUEST_UNIQUE_VISITORS = 'REQUEST_UNIQUE_VISITORS'
+export const RECEIVE_UNIQUE_VISITORS = 'RECEIVE_UNIQUE_VISITORS'
 // const baseURL = "http://localhost:3030";
 const baseURL = "http://128.199.154.60:3030";
 
@@ -125,7 +128,7 @@ export function selectSuburl(suburl) {
 export function invalidateSuburl(suburl) {
   return {
     type: INVALIDATE_SUBURL,
-    suburl,
+    suburl
   }
 }
 
@@ -228,10 +231,66 @@ function fetchVisitors(suburl, value) {
   }
 }
 
+function shouldFetchVisitors(state, suburl) {
+  const visitors = state.postsBySuburl[suburl]
+  if (!visitors) {
+    return true
+  } else if (visitors.isFetching) {
+    return false
+  } else {
+    return visitors.didInvalidate
+  }
+}
+
 export function fetchVisitorsIfNeeded(suburl, value) {
   return (dispatch, getState) => {
-    // if (shouldFetchMacs(getState(), suburl)) {
-    return dispatch(fetchVisitors(suburl, value))
-    // }
+    if (shouldFetchVisitors(getState(), suburl)) {
+      return dispatch(fetchVisitors(suburl, value))
+    }
+  }
+}
+
+////// unique visitors
+function receiveUniqueVisitors(suburl, json) {
+  var obj = {
+    type: RECEIVE_UNIQUE_VISITORS,
+    suburl,
+    uniqueVisitors: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchUniqueVisitors(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.week = 37;
+    value.year = 2017;
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/visitors/unique?sensors=${value.sensors}&week=${value.week}&year=${value.year}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveUniqueVisitors(suburl, json.response)))
+  }
+}
+
+function shouldFetchUniqueVisitors(state, suburl) {
+  const uniqueVisitors = state.postsBySuburl[suburl]
+  if (!uniqueVisitors) {
+    return true
+  } else if (uniqueVisitors.isFetching) {
+    return false
+  } else {
+    return uniqueVisitors.didInvalidate
+  }
+}
+
+export function fetchUniqueVisitorsIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    if (shouldFetchUniqueVisitors(getState(), suburl)) {
+      return dispatch(fetchUniqueVisitors(suburl, value))
+    }
   }
 }

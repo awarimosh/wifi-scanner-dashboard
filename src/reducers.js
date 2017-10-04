@@ -11,6 +11,8 @@ import {
   RECEIVE_MACS,
   REQUEST_VISITORS,
   RECEIVE_VISITORS,
+  REQUEST_UNIQUE_VISITORS,
+  RECEIVE_UNIQUE_VISITORS,
   SELECT_SUBURL
 } from './actions'
 
@@ -30,13 +32,27 @@ function selectedSuburl(state = 'reactjs', action) {
     case REQUEST_SENSORS:
       action.suburl = "sensors";
       return action.suburl
-    case RECEIVE_MACS:
+    case RECEIVE_SENSORS:
       action.suburl = "sensors";
       return action.suburl
     case REQUEST_MACS:
       action.suburl = "macs";
       return action.suburl
-
+    case RECEIVE_MACS:
+      action.suburl = "macs";
+      return action.suburl
+    case REQUEST_VISITORS:
+      action.suburl = "visitors";
+      return action.suburl
+    case RECEIVE_VISITORS:
+      action.suburl = "visitors";
+      return action.suburl
+    case REQUEST_UNIQUE_VISITORS:
+      action.suburl = "visitors/unique";
+      return action.suburl
+    case RECEIVE_UNIQUE_VISITORS:
+      action.suburl = "visitors/unique";
+      return action.suburl
     default:
       return state
   }
@@ -144,6 +160,19 @@ function data(
         lastUpdated: action.receivedAt
       })
       return obj
+    case REQUEST_UNIQUE_VISITORS:
+      return Object.assign({}, state, {
+        isFetching: true,
+        didInvalidate: false
+      })
+    case RECEIVE_UNIQUE_VISITORS:
+      obj = Object.assign(state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.uniqueVisitors,
+        lastUpdated: action.receivedAt
+      })
+      return obj
     default:
       return state
   }
@@ -165,7 +194,12 @@ function postsBySublog(state = {}, action) {
 function postsBySuburl(state = {}, action) {
   switch (action.type) {
     case INVALIDATE_SUBURL:
-      return state
+      if (state[action.suburl] !== undefined && !state[action.suburl].didInvalidate) {
+        state[action.suburl].didInvalidate = true;
+        return state;
+      } else {
+        return state;
+      }
     case REQUEST_SENSORS:
     case RECEIVE_SENSORS:
       return Object.assign({}, state, {
@@ -178,6 +212,11 @@ function postsBySuburl(state = {}, action) {
       })
     case REQUEST_VISITORS:
     case RECEIVE_VISITORS:
+      return Object.assign({}, state, {
+        [action.suburl]: data(state[action.suburl], action)
+      })
+    case REQUEST_UNIQUE_VISITORS:
+    case RECEIVE_UNIQUE_VISITORS:
       return Object.assign({}, state, {
         [action.suburl]: data(state[action.suburl], action)
       })

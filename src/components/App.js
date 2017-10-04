@@ -10,6 +10,7 @@ import LogContainer from './LogContainer';
 import SensorsList from './SensorsList';
 import MacContainer from './MacContainer';
 import Visitors from './Visitors';
+import UniqueVisitors from './UniqueVisitors'
 
 const store = configureStore();
 
@@ -35,6 +36,10 @@ const navItems =
   label: 'Visitors',
   to: '/visitors',
   icon: 'group',
+},{
+  label: 'Unique Visitors',
+  to: '/uniqueVisitors',
+  icon: 'group',
 },  ];
 
 class App extends Component {
@@ -54,6 +59,7 @@ class App extends Component {
                 <Route path="/logs" location={location} component={LogContainer} />
                 <Route path="/macs" location={location} component={MacContainer} />
                 <Route path="/visitors" location={location} component={Visitors} />
+                <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
               </Switch>
             </Provider>
           </NavigationDrawer>

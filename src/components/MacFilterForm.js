@@ -94,7 +94,7 @@ class MacFilterForm extends Component {
             'marginLeft': '50px'
         };
         const today = new Date();
-        const { macs, sensors } = this.props
+        const { macs, sensors, isFetching, } = this.props
 
         function getPrevious(input, props) {
             var prev = []
@@ -162,7 +162,9 @@ class MacFilterForm extends Component {
                 </div>
 
                 <div className="md-grid" style={divStyle}>
-                    <Mac macs={getCurrent(macs, this.state)} />
+                {isFetching && macs.length === 0 && <h2>Loading...</h2>}
+                    {!isFetching &&
+                        <Mac macs={getCurrent(macs, this.state)} />}
                 </div>
             </div>
         );

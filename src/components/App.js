@@ -5,7 +5,7 @@ import NavLink from '../NavLink';
 import configureStore from '../configureStore'
 import { Provider } from 'react-redux';
 
-import Home from './Home';
+// import Home from './Home';
 import LogContainer from './LogContainer';
 import SensorsList from './SensorsList';
 import MacContainer from './MacContainer';
@@ -15,12 +15,14 @@ import UniqueVisitors from './UniqueVisitors'
 const store = configureStore();
 
 const navItems = 
-[{
-  exact: true,
-  label: 'Home',
-  to: '/',
-  icon: 'home',
-}, {
+[
+//   {
+//   exact: true,
+//   label: 'Home',
+//   to: '/',
+//   icon: 'home',
+// }, 
+{
   label: 'Logs',
   to: '/logs',
   icon: 'history',
@@ -54,7 +56,8 @@ class App extends Component {
           >
             <Provider store={store}>
               <Switch key={location.key}>
-                <Route exact path="/" location={location} component={Home} />
+                {/* <Route exact path="/" location={location} component={Home} /> */}
+                <Route exact path="/" location={location} component={LogContainer} />
                 <Route path="/locations" location={location} component={SensorsList} />
                 <Route path="/logs" location={location} component={LogContainer} />
                 <Route path="/macs" location={location} component={MacContainer} />

@@ -20,6 +20,9 @@ export const RECEIVE_VISITORS = 'RECEIVE_VISITORS'
 
 export const REQUEST_UNIQUE_VISITORS = 'REQUEST_UNIQUE_VISITORS'
 export const RECEIVE_UNIQUE_VISITORS = 'RECEIVE_UNIQUE_VISITORS'
+
+export const REQUEST_DURATION = 'REQUEST_DURATION'
+export const RECEIVE_DURATION = 'RECEIVE_DURATION'
 // const baseURL = "http://localhost:3030";
 const baseURL = "http://128.199.154.60:3030";
 
@@ -291,6 +294,51 @@ export function fetchUniqueVisitorsIfNeeded(suburl, value) {
   return (dispatch, getState) => {
     if (shouldFetchUniqueVisitors(getState(), suburl)) {
       return dispatch(fetchUniqueVisitors(suburl, value))
+    }
+  }
+}
+
+////// Duration
+function receiveDuration(suburl, json) {
+  var obj = {
+    type: RECEIVE_DURATION,
+    suburl,
+    duration: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchDuration(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.week = 37;
+    value.year = 2017;
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/duration/?sensors=${value.sensors}&week=${value.week}&year=${value.year}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveDuration(suburl, json.response)))
+  }
+}
+
+function shouldFetchDuration(state, suburl) {
+  const duration = state.postsBySuburl[suburl]
+  if (!duration) {
+    return true
+  } else if (duration.isFetching) {
+    return false
+  } else {
+    return duration.didInvalidate
+  }
+}
+
+export function fetchDurationIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    if (shouldFetchDuration(getState(), suburl)) {
+      return dispatch(fetchDuration(suburl, value))
     }
   }
 }

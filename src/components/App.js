@@ -11,6 +11,7 @@ import SensorsList from './SensorsList';
 import MacContainer from './MacContainer';
 import Visitors from './Visitors';
 import UniqueVisitors from './UniqueVisitors'
+import Duration from './Duration'
 
 const store = configureStore();
 
@@ -41,7 +42,11 @@ const navItems =
 },{
   label: 'Unique Visitors',
   to: '/uniqueVisitors',
-  icon: 'group',
+  icon: 'person_pin',
+},{
+  label: 'Duration',
+  to: '/duration',
+  icon: 'av_timer',
 },  ];
 
 class App extends Component {
@@ -63,6 +68,7 @@ class App extends Component {
                 <Route path="/macs" location={location} component={MacContainer} />
                 <Route path="/visitors" location={location} component={Visitors} />
                 <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
+                <Route path="/duration" location={location} component={Duration} />
               </Switch>
             </Provider>
           </NavigationDrawer>

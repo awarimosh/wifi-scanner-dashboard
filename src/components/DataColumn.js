@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import FontIcon from 'react-md/lib/FontIcons';
 
-export default class VisitorColumn extends Component {
+export default class DataColumn extends Component {
     render() {
         const { current, noncurrent } = this.props
         const divStyle1 = {

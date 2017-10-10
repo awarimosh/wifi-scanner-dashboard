@@ -4,30 +4,30 @@ import TableHeader from 'react-md/lib/DataTables/TableHeader';
 import TableBody from 'react-md/lib/DataTables/TableBody';
 import TableRow from 'react-md/lib/DataTables/TableRow';
 import TableColumn from 'react-md/lib/DataTables/TableColumn';
-import VisitorColumn from './VisitorColumn'
+import DataColumn from './DataColumn'
 
-export default class VisitorRow extends Component {
+export default class DataRow extends Component {
     render() {
         const divStyle1 = {
             display: 'inline-block', width: '65px', marginLeft: 'auto', marginRight: 'auto', whiteSpace: 'normal', textAlign: 'center'
         }
-        const { isFetching, visitors } = this.props
-        const thisweek = isFetching === true ? [] : visitors.thisweek;
-        const lastweek = isFetching === true ? [] : visitors.lastweek;
-        const nextweek = isFetching === true ? [] : visitors.nextweek;
+        const { isFetching, data } = this.props
+        const thisweek = isFetching === true ? [] : data.thisweek;
+        const lastweek = isFetching === true ? [] : data.lastweek;
+        const nextweek = isFetching === true ? [] : data.nextweek;
         const rows = thisweek.map((_, i) => (
             <TableRow key={i} style={{
             }}>
                 <TableColumn >{thisweek[i].sensorID}</TableColumn>
                 <div style={{borderLeft: 'medium #C54B03 solid', marginRight: '50px',height: '100px'}} />
                 <TableColumn>
-                    {thisweek[i].visitors}
+                    {thisweek[i].data}
                 </TableColumn>
                 <TableColumn>
-                    <VisitorColumn current={thisweek[i].visitors} noncurrent={lastweek[i].visitors} />                    
+                    <DataColumn current={thisweek[i].data} noncurrent={lastweek[i].data} />                    
                 </TableColumn>
                 <TableColumn>
-                    <VisitorColumn current={thisweek[i].visitors} noncurrent={nextweek[i].visitors} />                    
+                    <DataColumn current={thisweek[i].data} noncurrent={nextweek[i].data} />                    
                 </TableColumn>
             </TableRow>
         ));
@@ -36,7 +36,7 @@ export default class VisitorRow extends Component {
             if (data.length > 0) {
                 var sum = 0, count = 0;
                 data.forEach(function (element) {
-                    count += element.visitors
+                    count += element.data
                     sum += 1;
                 }, this);
                 return Math.round(count / sum);

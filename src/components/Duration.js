@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 // import PropTypes from 'prop-types'
 import {
-    fetchVisitorsIfNeeded,
+    fetchDurationIfNeeded,
     fetchSensorsIfNeeded,
     invalidateSuburl
 } from '../actions'
@@ -13,7 +13,7 @@ import moment from 'moment';
 const now = moment();
 const format = 'YYYY-Wo';
 
-class Visitors extends Component {
+class Duration extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -40,14 +40,14 @@ class Visitors extends Component {
                 week: this.state.week,
                 year: this.state.year
             }
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(fetchDurationIfNeeded('duration', values));
         }
     }
 
     componentDidUpdate(nextProps) {
         const { dispatch } = this.props
         var values;
-        if (this.props.sensors !== nextProps && this.props.sensors.length > 0 && this.props.visitors.length === 0 && nextProps.sensors.length === 0 && this.state.dateChanged) {
+        if (this.props.sensors !== nextProps && this.props.sensors.length > 0 && this.props.duration.length === 0 && nextProps.sensors.length === 0 && this.state.dateChanged) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID
             }).toString();
@@ -61,7 +61,7 @@ class Visitors extends Component {
                 dateChanged: false,
                 ready : true
             });
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(fetchDurationIfNeeded('duration', values));
         }
         else if (this.state.dateChanged && this.props.sensors.length > 0) {
             values = {
@@ -73,10 +73,10 @@ class Visitors extends Component {
                 dateChanged: false,
                 ready : false
             });
-            dispatch(invalidateSuburl('visitors'));
-            dispatch(fetchVisitorsIfNeeded('visitors', values));
+            dispatch(invalidateSuburl('duration'));
+            dispatch(fetchDurationIfNeeded('duration', values));
         }
-        else if(this.props.visitors !== nextProps.visitors){
+        else if(this.props.duration !== nextProps.duration){
             this.setState({
                 ready : true
             });
@@ -95,11 +95,11 @@ class Visitors extends Component {
             week: data.week,
             year: data.year
         }
-        dispatch(fetchVisitorsIfNeeded('visitors', values))
+        dispatch(fetchDurationIfNeeded('duration', values))
     }
 
     render() {
-        const { isFetching, visitors, didInvalidate } = this.props
+        const { isFetching, duration, didInvalidate } = this.props
         const style1 = {
             padding: '20px',
             alignSelf: 'center',
@@ -131,17 +131,17 @@ class Visitors extends Component {
                     fontSize: 'large',
                     padding: '10px'
                 }}>
-                    Visitors
+                    Duration
                 </div>
 
                 <div style={{
                     margin: '10px'
                 }}>
 
-                    {isFetching && visitors.length === 0 && <h2>Loading...</h2>}
+                    {isFetching && duration.length === 0 && <h2>Loading...</h2>}
                     {!isFetching && !didInvalidate && !this.state.ready &&<h2>Fetching...</h2>}
                     {!isFetching && !didInvalidate && this.state.ready &&
-                        <DataRow data={visitors} isFetching={isFetching} />}
+                        <DataRow data={duration} isFetching={isFetching} />}
                 </div>
             </div>
         );
@@ -154,8 +154,8 @@ function mapStateToProps(state) {
     const {
         didInvalidate,
         isFetching,
-        items: visitors
-        } = postsBySuburl['visitors'] || {
+        items: duration
+        } = postsBySuburl['duration'] || {
             isFetching: true,
             items: []
         };
@@ -169,9 +169,9 @@ function mapStateToProps(state) {
         didInvalidate,
         isFetching,
         selectedSuburl,
-        visitors,
+        duration,
         sensors,
     }
 }
 
-export default connect(mapStateToProps)(Visitors)
+export default connect(mapStateToProps)(Duration)

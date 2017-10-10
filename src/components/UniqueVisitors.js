@@ -7,7 +7,7 @@ import {
     invalidateSuburl
 } from '../actions'
 import WeekPicker from './WeekPicker'
-import VisitorRow from './VisitorRow'
+import DataRow from './DataRow'
 
 import moment from 'moment';
 const now = moment();
@@ -20,7 +20,8 @@ class UniqueVisitors extends Component {
             sensorIDs: "",
             week: parseInt(now && (now.format(format)).substr(5, 6), 10),
             year: parseInt(now && (now.format(format)).substr(0, 4), 10),
-            dateChanged: true
+            dateChanged: true,
+            ready : false
         };
     }
 
@@ -57,7 +58,8 @@ class UniqueVisitors extends Component {
             }
             this.setState({
                 sensorIDs: sensorIDs,
-                dateChanged: false
+                dateChanged: false,
+                ready : true
             });
             dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values));
         }
@@ -68,10 +70,16 @@ class UniqueVisitors extends Component {
                 year: this.state.year
             }
             this.setState({
-                dateChanged: false
+                dateChanged: false,
+                ready : false
             });
             dispatch(invalidateSuburl('uniqueVisitors'));
             dispatch(fetchUniqueVisitorsIfNeeded('uniqueVisitors', values));
+        }
+        else if(this.props.uniqueVisitors !== nextProps.uniqueVisitors){
+            this.setState({
+                ready : true
+            });
         }
     }
 
@@ -91,7 +99,7 @@ class UniqueVisitors extends Component {
     }
 
     render() {
-        const { isFetching, uniqueVisitors } = this.props
+        const { isFetching, didInvalidate, uniqueVisitors } = this.props
         const style1 = {
             padding: '20px',
             alignSelf: 'center',
@@ -110,13 +118,13 @@ class UniqueVisitors extends Component {
                         previous week
                     <br />
                         <br />
-                        {this.state.week - 1}
+                        week {this.state.week - 1}
                     </div>
                     <div className="md-cell--2" style={style1}>
                         next week
                     <br />
                         <br />
-                        {this.state.week + 1}
+                        week {this.state.week + 1}
                     </div>
                 </div>
                 <div style={{
@@ -131,8 +139,9 @@ class UniqueVisitors extends Component {
                 }}>
 
                     {isFetching && uniqueVisitors.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching &&
-                        <VisitorRow visitors={uniqueVisitors} isFetching={isFetching} />}
+                    {!isFetching && !didInvalidate && !this.state.ready &&<h2>Fetching...</h2>}
+                    {!isFetching  && !didInvalidate && this.state.ready &&
+                        <DataRow data={uniqueVisitors} isFetching={isFetching} />}
                 </div>
             </div>
         );

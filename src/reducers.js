@@ -13,6 +13,8 @@ import {
   RECEIVE_VISITORS,
   REQUEST_UNIQUE_VISITORS,
   RECEIVE_UNIQUE_VISITORS,
+  REQUEST_DURATION,
+  RECEIVE_DURATION,
   SELECT_SUBURL
 } from './actions'
 
@@ -52,6 +54,12 @@ function selectedSuburl(state = 'reactjs', action) {
       return action.suburl
     case RECEIVE_UNIQUE_VISITORS:
       action.suburl = "visitors/unique";
+      return action.suburl
+    case REQUEST_DURATION:
+      action.suburl = "duration";
+      return action.suburl
+    case RECEIVE_DURATION:
+      action.suburl = "duration";
       return action.suburl
     default:
       return state
@@ -173,6 +181,19 @@ function data(
         lastUpdated: action.receivedAt
       })
       return obj
+    case REQUEST_DURATION:
+      return Object.assign({}, state, {
+        isFetching: true,
+        didInvalidate: false
+      })
+    case RECEIVE_DURATION:
+      obj = Object.assign(state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.duration,
+        lastUpdated: action.receivedAt
+      })
+      return obj
     default:
       return state
   }
@@ -217,6 +238,11 @@ function postsBySuburl(state = {}, action) {
       })
     case REQUEST_UNIQUE_VISITORS:
     case RECEIVE_UNIQUE_VISITORS:
+      return Object.assign({}, state, {
+        [action.suburl]: data(state[action.suburl], action)
+      })
+    case REQUEST_DURATION:
+    case RECEIVE_DURATION:
       return Object.assign({}, state, {
         [action.suburl]: data(state[action.suburl], action)
       })

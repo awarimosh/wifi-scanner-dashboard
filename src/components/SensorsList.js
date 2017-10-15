@@ -17,8 +17,10 @@ class SensorsList extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedSuburl } = this.props
-    dispatch(fetchSensorsIfNeeded(selectedSuburl))
+    const { dispatch, selectedSuburl } = this.props;
+    dispatch(fetchSensorsIfNeeded(selectedSuburl));
+    if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
+      this.props.history.push('login');
   }
 
   componentDidUpdate(prevProps) {
@@ -45,7 +47,7 @@ class SensorsList extends Component {
     const mapstyle = {
       height: '100%',
       width: '100%',
-      position : 'relative'
+      position: 'relative'
     }
     return (
       <div className="md-grid">

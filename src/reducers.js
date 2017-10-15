@@ -15,6 +15,7 @@ import {
   RECEIVE_UNIQUE_VISITORS,
   REQUEST_DURATION,
   RECEIVE_DURATION,
+  RECEIVE_USER,
   SELECT_SUBURL
 } from './actions'
 
@@ -194,6 +195,14 @@ function data(
         lastUpdated: action.receivedAt
       })
       return obj
+      case RECEIVE_USER:
+        obj = Object.assign(state, {
+          isFetching: false,
+          didInvalidate: false,
+          items: action.user,
+          lastUpdated: action.receivedAt
+        })
+        return obj
     default:
       return state
   }
@@ -243,6 +252,10 @@ function postsBySuburl(state = {}, action) {
       })
     case REQUEST_DURATION:
     case RECEIVE_DURATION:
+      return Object.assign({}, state, {
+        [action.suburl]: data(state[action.suburl], action)
+      })
+    case RECEIVE_USER:
       return Object.assign({}, state, {
         [action.suburl]: data(state[action.suburl], action)
       })

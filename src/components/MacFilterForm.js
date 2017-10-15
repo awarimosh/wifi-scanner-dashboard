@@ -26,21 +26,17 @@ class MacFilterForm extends Component {
     }
 
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch } = this.props;
         var values = {
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             sensorID: this.state.sensorID,
             selectedDate: this.state.selectedDate,
         }
-        dispatch(fetchMacsIfNeeded('macs', values))
-        dispatch(fetchSensorsIfNeeded('sensors'))
+        dispatch(fetchMacsIfNeeded('macs', values));
+        dispatch(fetchSensorsIfNeeded('sensors'));
     }
 
-    componentWillUnmount() {
-
-    }
-    
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -162,7 +158,7 @@ class MacFilterForm extends Component {
                 </div>
 
                 <div className="md-grid" style={divStyle}>
-                {isFetching && macs.length === 0 && <h2>Loading...</h2>}
+                    {isFetching && macs.length === 0 && <h2>Loading...</h2>}
                     {!isFetching &&
                         <Mac macs={getCurrent(macs, this.state)} />}
                 </div>

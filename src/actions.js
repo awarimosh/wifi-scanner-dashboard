@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import { notify } from 'react-notify-toast';
 
 export const REQUEST_LOGS = 'REQUEST_LOGS'
 export const RECEIVE_LOGS = 'RECEIVE_LOGS'
@@ -23,6 +24,8 @@ export const RECEIVE_UNIQUE_VISITORS = 'RECEIVE_UNIQUE_VISITORS'
 
 export const REQUEST_DURATION = 'REQUEST_DURATION'
 export const RECEIVE_DURATION = 'RECEIVE_DURATION'
+
+export const RECEIVE_USER = 'RECEIVE_USER'
 // const baseURL = "http://localhost:3030";
 const baseURL = "http://128.199.154.60:3030";
 
@@ -120,6 +123,46 @@ export function postSensor(payload) {
     });
 }
 
+export function validateLogin(payload) {
+  fetch(`${baseURL}/user/login?email=${payload.email}&password=${payload.password}`, {
+    method: "GET",
+    headers: new Headers({
+      "Content-Type": "application/json"
+    }),
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      let myColor = { background: '#FFAB91', text: "#FFFFFF" };
+      notify.show(res.response.message, "custom", 5000, myColor);
+
+      if (typeof (Storage) !== "undefined") {
+        localStorage.setItem("validated", res.response.success);
+        localStorage.setItem("user", JSON.stringify(res.response.result));
+        res.response.success === true ? localStorage.setItem("redirect", 'logs') : console.error("not redirected");
+        res.response.success === true ? window.location.reload() : console.log("");
+      } else {
+        console.error("Sorry, your browser does not support Web Storage...");
+      }
+      console.log('res', res.response)
+    })
+    .catch((err) => {
+      console.error('Fetch signup ERROR:', err)
+    });
+}
+
+export function postRegister(payload) {
+  console.log('payload', payload);
+  fetch(`${baseURL}/user/register?email=${payload.email}&firstName=${payload.first_name}&lastName=${payload.last_name}&password=${payload.password}`, {
+    method: "POST",
+  })
+    .then((res) => {
+      return res.response
+    })
+    .catch((err) => {
+      console.error('Fetch signup ERROR:', err)
+    });
+}
+
 /////// sensors
 export function selectSuburl(suburl) {
   return {
@@ -146,9 +189,10 @@ function receiveSensors(suburl, json) {
 }
 
 function fetchSensors(suburl) {
+  var email = localStorage.getItem('user') !== null ? JSON.parse(localStorage.getItem('user')).email : ""
   return dispatch => {
     dispatch(requestSuburl(suburl, RECEIVE_SENSORS))
-    return fetch(`${baseURL}/sensors/sensors`)
+    return fetch(`${baseURL}/sensors/user/${email}`)
       .then(response => response.json())
       .then(json => dispatch(receiveSensors('sensors', json)))
   }
@@ -339,6 +383,50 @@ export function fetchDurationIfNeeded(suburl, value) {
   return (dispatch, getState) => {
     if (shouldFetchDuration(getState(), suburl)) {
       return dispatch(fetchDuration(suburl, value))
+    }
+  }
+}
+
+////// Login
+function receiveUser(suburl, json) {
+  var obj = {
+    type: RECEIVE_USER,
+    suburl,
+    user: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchUser(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.email = '';
+    value.password = '';
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/user/login?email=${value.email}&password=${value.password}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveUser(suburl, json.response)))
+  }
+}
+
+function shouldFetchUser(state, suburl) {
+  const user = state.postsBySuburl[suburl]
+  if (!user) {
+    return true
+  } else if (user.isFetching) {
+    return false
+  } else {
+    return user.didInvalidate
+  }
+}
+
+export function fetchUserIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    if (shouldFetchUser(getState(), suburl)) {
+      return dispatch(fetchUser(suburl, value))
     }
   }
 }

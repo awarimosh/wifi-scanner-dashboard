@@ -28,6 +28,8 @@ class Duration extends Component {
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(fetchSensorsIfNeeded('sensors'));
+        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
+            this.props.history.push('login');
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID

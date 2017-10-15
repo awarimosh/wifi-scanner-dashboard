@@ -17,8 +17,10 @@ class LogContainer extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedSublog } = this.props
-    dispatch(fetchLogsIfNeeded(selectedSublog))
+    const { dispatch, selectedSublog } = this.props;
+    dispatch(fetchLogsIfNeeded(selectedSublog));
+    if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
+      this.props.history.push('login');
   }
 
   componentDidUpdate(prevProps) {

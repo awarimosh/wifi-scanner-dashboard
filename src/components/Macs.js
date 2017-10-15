@@ -5,7 +5,7 @@ import TableBody from 'react-md/lib/DataTables/TableBody';
 import TableRow from 'react-md/lib/DataTables/TableRow';
 import TableColumn from 'react-md/lib/DataTables/TableColumn';
 
-export default class Macs extends Component {
+export default class Macs extends Component {    
     render() {
         const rows = this.props.macs.map((_, i) => (
             <TableRow key={i}>
@@ -54,14 +54,14 @@ export default class Macs extends Component {
                 return hours + " : " + minutes + " : " + seconds
             }
         }
-        function getUnique(val){
-            if(val == null || val.length === 0){
+        function getUnique(val) {
+            if (val == null || val.length === 0) {
                 return "null"
             }
-            else if (val === true){
+            else if (val === true) {
                 return "true"
             }
-            else if (val === false){
+            else if (val === false) {
                 return "false"
             }
         }

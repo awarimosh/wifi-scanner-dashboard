@@ -21,13 +21,15 @@ class Visitors extends Component {
             week: parseInt(now && (now.format(format)).substr(5, 6), 10),
             year: parseInt(now && (now.format(format)).substr(0, 4), 10),
             dateChanged: true,
-            ready : false
+            ready: false
         };
     }
 
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(fetchSensorsIfNeeded('sensors'));
+        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
+            this.props.history.push('login');
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID
@@ -59,7 +61,7 @@ class Visitors extends Component {
             this.setState({
                 sensorIDs: sensorIDs,
                 dateChanged: false,
-                ready : true
+                ready: true
             });
             dispatch(fetchVisitorsIfNeeded('visitors', values));
         }
@@ -71,14 +73,14 @@ class Visitors extends Component {
             }
             this.setState({
                 dateChanged: false,
-                ready : false
+                ready: false
             });
             dispatch(invalidateSuburl('visitors'));
             dispatch(fetchVisitorsIfNeeded('visitors', values));
         }
-        else if(this.props.visitors !== nextProps.visitors){
+        else if (this.props.visitors !== nextProps.visitors) {
             this.setState({
-                ready : true
+                ready: true
             });
         }
     }
@@ -139,7 +141,7 @@ class Visitors extends Component {
                 }}>
 
                     {isFetching && visitors.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching && !didInvalidate && !this.state.ready &&<h2>Fetching...</h2>}
+                    {!isFetching && !didInvalidate && !this.state.ready && <h2>Fetching...</h2>}
                     {!isFetching && !didInvalidate && this.state.ready &&
                         <DataRow data={visitors} isFetching={isFetching} />}
                 </div>

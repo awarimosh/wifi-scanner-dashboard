@@ -50,11 +50,17 @@ const navItems =
     },];
 
 class App extends Component {
-  logout = () => {
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(e) {
     console.log('logoff');
     localStorage.clear();
     window.location.reload();
-  };
+  }
+
   render() {
     return (
       <Route
@@ -62,7 +68,7 @@ class App extends Component {
           <NavigationDrawer
             drawerTitle="Tracker"
             toolbarTitle="Welcome to SureTouch"
-            toolbarActions={<Button flat style={{ marginTop: '22px' }} onClick={this.logout}>logout</Button>}
+            toolbarActions={<Button flat style={{ marginTop: '22px' }} onClick={this.handleClick}>logout</Button>}
             navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
           >
             <Provider store={store}>

@@ -236,12 +236,6 @@ function receiveMacs(suburl, json) {
 }
 
 function fetchMacs(suburl, value) {
-  if (value === undefined) {
-    value = {};
-    value.sensorID = 2844;
-    value.startDate = new Date().setHours(0, 0, 0, 0) / 1000 - 86400;
-    value.endDate = Date.now() / 1000 + 86400 + 86400;
-  }
   return dispatch => {
     dispatch(requestSuburl(suburl))
     return fetch(`${baseURL}/macs/filter/${value.sensorID}/startDate/${value.startDate}/endDate/${value.endDate}`)

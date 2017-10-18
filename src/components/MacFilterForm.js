@@ -18,7 +18,7 @@ class MacFilterForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sensorID: '2844',
+            sensorID: this.props.sensors !== undefined ? this.props.sensors.length !== 0 ? this.props.sensors[0].ID : '2844' : '2844',
             endDate: new Date().setHours(0, 0, 0, 0) / 1000 + 86400 + 86400,
             startDate: new Date().setHours(0, 0, 0, 0) / 1000 - 86400,
             selectedDate: new Date().setHours(0, 0, 0, 0) / 1000,
@@ -34,18 +34,21 @@ class MacFilterForm extends Component {
 
     componentDidMount() {
         const { dispatch } = this.props;
-        var values = {
-            startDate: this.state.startDate,
-            endDate: this.state.endDate,
-            sensorID: this.state.sensorID,
-            selectedDate: this.state.selectedDate,
-        }
-        dispatch(fetchMacsIfNeeded('macs', values));
         dispatch(fetchSensorsIfNeeded('sensors'));
     }
 
     componentDidUpdate(nextProps) {
-        if (this.props.macs !== nextProps.macs) {
+        const { dispatch } = this.props;
+        if (this.props.sensors !== nextProps.sensors){
+            var values = {
+                startDate: this.state.startDate,
+                endDate: this.state.endDate,
+                sensorID: this.props.sensors[0].ID,
+                selectedDate: this.state.selectedDate,
+            }
+            dispatch(fetchMacsIfNeeded('macs', values));
+        }
+        else if (this.props.macs !== nextProps.macs) {
             this.setState({
                 ready: true
             });

@@ -7,7 +7,7 @@ class MacContainer extends Component {
     if  (validated === undefined || validated === null || validated === false)
       this.props.history.push('login');
     else {
-      console.log('validated',validated);
+      // console.log('validated',validated);
     }
   }
   render() {

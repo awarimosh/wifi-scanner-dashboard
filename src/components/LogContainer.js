@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import Lottie from 'react-lottie';
 import {
   selectSublog,
   fetchLogsIfNeeded,
@@ -8,6 +9,7 @@ import {
 } from '../actions'
 import Logs from './Logs'
 import Picker from './Picker'
+import * as animationData from '../animations/loading.json'
 
 class LogContainer extends Component {
   constructor(props) {
@@ -44,6 +46,14 @@ class LogContainer extends Component {
 
   render() {
     const { isFetching, lastUpdated, logs } = this.props
+    const defaultOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: animationData,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    };
     return (
       <div className="md-grid">
 
@@ -62,8 +72,10 @@ class LogContainer extends Component {
           onChange={this.handleChange}
           options={[{ ID: '5', Name: 'Five' }, { ID: '10', Name: 'Ten' }, { ID: '20', Name: 'Twenty' }, { ID: '50', Name: 'Fifty' }]}
         />
-        {isFetching && logs.length === 0 && <h2>Loading...</h2>}
-        {!isFetching && logs.length === 0 && <h2>Empty.</h2>}
+        {isFetching && logs.length === 0 &&
+          <Lottie options={defaultOptions} height={400} width={400} />}
+        {!isFetching && logs.length === 0 &&
+          <Lottie options={defaultOptions} height={400} width={400} />}
         {logs.length > 0 &&
           <div style={{ opacity: isFetching ? 0.5 : 1 }}>
             <Logs logs={logs} />

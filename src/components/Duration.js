@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import Lottie from 'react-lottie';
 // import PropTypes from 'prop-types'
 import {
     fetchDurationIfNeeded,
@@ -8,6 +9,7 @@ import {
 } from '../actions'
 import WeekPicker from './WeekPicker'
 import DataRow from './DataRow'
+import * as animationData from '../animations/snap_loader_black.json'
 
 import moment from 'moment';
 const now = moment();
@@ -21,7 +23,7 @@ class Duration extends Component {
             week: parseInt(now && (now.format(format)).substr(5, 6), 10),
             year: parseInt(now && (now.format(format)).substr(0, 4), 10),
             dateChanged: true,
-            ready : false
+            ready: false
         };
     }
 
@@ -61,7 +63,7 @@ class Duration extends Component {
             this.setState({
                 sensorIDs: sensorIDs,
                 dateChanged: false,
-                ready : true
+                ready: true
             });
             dispatch(fetchDurationIfNeeded('duration', values));
         }
@@ -73,14 +75,14 @@ class Duration extends Component {
             }
             this.setState({
                 dateChanged: false,
-                ready : false
+                ready: false
             });
             dispatch(invalidateSuburl('duration'));
             dispatch(fetchDurationIfNeeded('duration', values));
         }
-        else if(this.props.duration !== nextProps.duration){
+        else if (this.props.duration !== nextProps.duration) {
             this.setState({
-                ready : true
+                ready: true
             });
         }
     }
@@ -107,6 +109,14 @@ class Duration extends Component {
             alignSelf: 'center',
             textAlign: 'center'
         }
+        const defaultOptions = {
+            loop: true,
+            autoplay: true,
+            animationData: animationData,
+            rendererSettings: {
+                preserveAspectRatio: 'xMidYMid slice'
+            }
+        };
         return (
             <div>
                 <div className="md-grid">
@@ -140,8 +150,12 @@ class Duration extends Component {
                     margin: '10px'
                 }}>
 
-                    {isFetching && duration.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching && !didInvalidate && !this.state.ready &&<h2>Fetching...</h2>}
+                    {isFetching && duration.length === 0 && <Lottie options={defaultOptions}
+                        height={400}
+                        width={400}
+                        isStopped={this.state.isStopped}
+                        isPaused={this.state.isPaused} />}
+                    {!isFetching && !didInvalidate && !this.state.ready && <h2>Fetching...</h2>}
                     {!isFetching && !didInvalidate && this.state.ready &&
                         <DataRow data={duration} isFetching={isFetching} />}
                 </div>

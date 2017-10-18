@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import Lottie from 'react-lottie';
 // import PropTypes from 'prop-types'
 import {
     fetchVisitorsIfNeeded,
@@ -8,6 +9,7 @@ import {
 } from '../actions'
 import WeekPicker from './WeekPicker'
 import DataRow from './DataRow'
+import * as animationData from '../animations/preloader.json'
 
 import moment from 'moment';
 const now = moment();
@@ -107,6 +109,14 @@ class Visitors extends Component {
             alignSelf: 'center',
             textAlign: 'center'
         }
+        const defaultOptions = {
+            loop: true,
+            autoplay: true,
+            animationData: animationData,
+            rendererSettings: {
+                preserveAspectRatio: 'xMidYMid slice'
+            }
+        };
         return (
             <div>
                 <div className="md-grid">
@@ -140,8 +150,10 @@ class Visitors extends Component {
                     margin: '10px'
                 }}>
 
-                    {isFetching && visitors.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching && !didInvalidate && !this.state.ready && <h2>Fetching...</h2>}
+                    {isFetching && visitors.length === 0 && 
+                    <Lottie options={defaultOptions} height={400} width={400} />}
+                    {!isFetching && !didInvalidate && !this.state.ready && 
+                    <Lottie options={defaultOptions} height={400} width={400} />}
                     {!isFetching && !didInvalidate && this.state.ready &&
                         <DataRow data={visitors} isFetching={isFetching} />}
                 </div>

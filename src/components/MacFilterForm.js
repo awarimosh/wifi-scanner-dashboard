@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import DatePicker from 'react-md/lib/Pickers/DatePickerContainer';
 import Subheader from 'react-md/lib/Subheaders';
 import { connect } from 'react-redux'
+import Lottie from 'react-lottie';
+// import * as animationData from '../animations/preloader.json'
+import * as animationData from '../animations/cycle_animation.json'
+// import * as animationData from '../animations/building.json'
 import {
     invalidateSuburl,
     fetchMacsIfNeeded,
@@ -17,7 +21,10 @@ class MacFilterForm extends Component {
             sensorID: '2844',
             endDate: new Date().setHours(0, 0, 0, 0) / 1000 + 86400 + 86400,
             startDate: new Date().setHours(0, 0, 0, 0) / 1000 - 86400,
-            selectedDate: new Date().setHours(0, 0, 0, 0) / 1000
+            selectedDate: new Date().setHours(0, 0, 0, 0) / 1000,
+            isStopped: false,
+            isPaused: false,
+            ready: false
         };
         this.handleChange = this.handleChange.bind(this)
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -37,6 +44,14 @@ class MacFilterForm extends Component {
         dispatch(fetchSensorsIfNeeded('sensors'));
     }
 
+    componentDidUpdate(nextProps) {
+        if (this.props.macs !== nextProps.macs) {
+            this.setState({
+                ready: true
+            });
+        }
+    }
+
     handleInputChange(event) {
         const target = event.target;
         const value = target.value;
@@ -49,7 +64,8 @@ class MacFilterForm extends Component {
 
     handleChange(input) {
         this.setState({
-            sensorID: input
+            sensorID: input,
+            ready: false
         });
         var values = {
             startDate: this.state.startDate,
@@ -62,9 +78,13 @@ class MacFilterForm extends Component {
 
     handleDateChange(input) {
         input = Date.parse(input) / 1000;
-        this.setState({ startDate: input - 86400 })
-        this.setState({ endDate: input + 86400 + 86400 })
-        this.setState({ selectedDate: input })
+        this.setState({
+            startDate: input - 86400,
+            endDate: input + 86400 + 86400,
+            selectedDate: input,
+            ready: false
+        }
+        );
         var values = {
             startDate: this.state.startDate,
             endDate: this.state.endDate,
@@ -90,7 +110,15 @@ class MacFilterForm extends Component {
             'marginLeft': '50px'
         };
         const today = new Date();
-        const { macs, sensors, isFetching, } = this.props
+        const { macs, sensors, isFetching, didInvalidate } = this.props;
+        const defaultOptions = {
+            loop: true,
+            autoplay: true,
+            animationData: animationData,
+            rendererSettings: {
+                preserveAspectRatio: 'xMidYMid slice'
+            }
+        };
 
         function getPrevious(input, props) {
             var prev = []
@@ -158,8 +186,11 @@ class MacFilterForm extends Component {
                 </div>
 
                 <div className="md-grid" style={divStyle}>
-                    {isFetching && macs.length === 0 && <h2>Loading...</h2>}
-                    {!isFetching &&
+                    {isFetching && macs.length === 0 && 
+                    <Lottie options={defaultOptions} height={400} width={400} />}
+                    {!isFetching && !didInvalidate && !this.state.ready && 
+                    <Lottie options={defaultOptions} height={400} width={400} />}
+                    {!isFetching && !didInvalidate && this.state.ready &&
                         <Mac macs={getCurrent(macs, this.state)} />}
                 </div>
             </div>
@@ -170,7 +201,8 @@ class MacFilterForm extends Component {
 function mapStateToProps(state) {
     const { selectedSuburl, postsBySuburl, sensorID, selectedDate } = state
     const {
-    isFetching,
+        didInvalidate,
+        isFetching,
         lastUpdated,
         items: macs
   } = postsBySuburl['macs'] || {
@@ -182,10 +214,10 @@ function mapStateToProps(state) {
   } = postsBySuburl['sensors'] || {
             items: []
         }
-    console.log('sensors', sensors)
     return {
         selectedSuburl,
         macs,
+        didInvalidate,
         isFetching,
         lastUpdated,
         sensorID,

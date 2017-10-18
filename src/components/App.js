@@ -4,6 +4,7 @@ import { Button, NavigationDrawer } from 'react-md';
 import NavLink from '../NavLink';
 import configureStore from '../configureStore'
 import { Provider } from 'react-redux';
+import createHistory from 'history/createBrowserHistory'
 
 // import Home from './Home';
 import LogContainer from './LogContainer';
@@ -13,6 +14,7 @@ import Visitors from './Visitors';
 import UniqueVisitors from './UniqueVisitors'
 import Duration from './Duration'
 
+const history = createHistory();
 const store = configureStore();
 
 const navItems =
@@ -58,6 +60,8 @@ class App extends Component {
   handleClick(e) {
     console.log('logoff');
     localStorage.clear();
+    history.push('/login');
+    history.replace('/login');
     window.location.reload();
   }
 

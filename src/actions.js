@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import { notify } from 'react-notify-toast';
+import createHistory from 'history/createBrowserHistory'
 
 export const REQUEST_LOGS = 'REQUEST_LOGS'
 export const RECEIVE_LOGS = 'RECEIVE_LOGS'
@@ -26,8 +27,11 @@ export const REQUEST_DURATION = 'REQUEST_DURATION'
 export const RECEIVE_DURATION = 'RECEIVE_DURATION'
 
 export const RECEIVE_USER = 'RECEIVE_USER'
-// const baseURL = "http://localhost:3030";
-const baseURL = "http://128.199.154.60:3030";
+
+const history = createHistory()
+
+const baseURL = "http://localhost:3030";
+// const baseURL = "http://128.199.154.60:3030";
 
 function requestSuburl(suburl, type) {
   switch (type) {
@@ -139,7 +143,9 @@ export function validateLogin(payload) {
         localStorage.setItem("validated", res.response.success);
         localStorage.setItem("user", JSON.stringify(res.response.result));
         res.response.success === true ? localStorage.setItem("redirect", 'logs') : console.error("not redirected");
-        res.response.success === true ? window.location.reload() : console.log("");
+        res.response.success === true ? history.replace('logs') : console.error("not redirected");
+        res.response.success === true ? history.push('logs') : console.error("not redirected");
+        res.response.success === true ? window.location.reload() : console.error("not redirected");
       } else {
         console.error("Sorry, your browser does not support Web Storage...");
       }
@@ -383,50 +389,6 @@ export function fetchDurationIfNeeded(suburl, value) {
   return (dispatch, getState) => {
     if (shouldFetchDuration(getState(), suburl)) {
       return dispatch(fetchDuration(suburl, value))
-    }
-  }
-}
-
-////// Login
-function receiveUser(suburl, json) {
-  var obj = {
-    type: RECEIVE_USER,
-    suburl,
-    user: json,
-    receivedAt: Date.now()
-  }
-  return obj;
-}
-
-function fetchUser(suburl, value) {
-  if (value === undefined) {
-    value = {};
-    value.email = '';
-    value.password = '';
-  }
-  return dispatch => {
-    dispatch(requestSuburl(suburl))
-    return fetch(`${baseURL}/user/login?email=${value.email}&password=${value.password}`)
-      .then(response => response.json())
-      .then(json => dispatch(receiveUser(suburl, json.response)))
-  }
-}
-
-function shouldFetchUser(state, suburl) {
-  const user = state.postsBySuburl[suburl]
-  if (!user) {
-    return true
-  } else if (user.isFetching) {
-    return false
-  } else {
-    return user.didInvalidate
-  }
-}
-
-export function fetchUserIfNeeded(suburl, value) {
-  return (dispatch, getState) => {
-    if (shouldFetchUser(getState(), suburl)) {
-      return dispatch(fetchUser(suburl, value))
     }
   }
 }

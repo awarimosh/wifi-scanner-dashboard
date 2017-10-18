@@ -30,8 +30,8 @@ export const RECEIVE_USER = 'RECEIVE_USER'
 
 const history = createHistory()
 
-const baseURL = "http://localhost:3030";
-// const baseURL = "http://128.199.154.60:3030";
+// const baseURL = "http://localhost:3030";
+const baseURL = "http://128.199.154.60:3030";
 
 function requestSuburl(suburl, type) {
   switch (type) {

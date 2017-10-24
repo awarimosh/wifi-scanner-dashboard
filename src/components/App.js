@@ -57,26 +57,19 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this);
-    if(window.location.pathname === "/login"){
+    console.log('state',window.location.pathname);
+    if(window.location.pathname.includes("register") || window.location.pathname.includes("login") ){
       this.state = {
-        visible: false, 
-        register:false,
-        renderNode: null 
+        visible: false,
+        renderNode: null
+      }
+    }else{
+      this.state = {
+        visible: true,
+        renderNode: null
       }
     }
-    else if (window.location.pathname === "/register"){
-      this.state = {
-        visible: false, 
-        register:true,
-        renderNode: null 
-      }
-    }
-    else{
-      this.state = {
-        visible: true, 
-        renderNode: null 
-      }
-    }
+
   }
 
   handleClick(e) {
@@ -88,44 +81,46 @@ class App extends Component {
   }
 
   render() {
-    const { visible, renderNode, register } = this.state;
+    const { visible, renderNode } = this.state;
     return (
       <Route
         render={({ location }) => (
           <div>
-        <DialogContainer
-          id="navigation-drawer-demo"
-          aria-label="Navigation Drawer Demo"
-          visible={visible}
-          fullPage
-          focusOnMount={false}
-          onShow={this.handleShow}
-          onHide={this.hide}
-        >
-          <NavigationDrawer
-            renderNode={renderNode}
-            drawerTitle="Tracker"
-            toolbarTitle="Welcome to SureTouch"
-            toolbarActions={<Button flat style={{ marginTop: '22px' }} onClick={this.handleClick}>logout</Button>}
-            navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
-          >
-            <Provider store={store}>
-              <Switch key={location.key}>
-                {/* <Route exact path="/" location={location} component={Home} /> */}
-                <Route exact path="/" location={location} component={LogContainer} />
-                <Route path="/locations" location={location} component={SensorsList} />
-                <Route path="/logs" location={location} component={LogContainer} />
-                <Route path="/macs" location={location} component={MacContainer} />
-                <Route path="/visitors" location={location} component={Visitors} />
-                <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
-                <Route path="/duration" location={location} component={Duration} />
-              </Switch>
-            </Provider>
-          </NavigationDrawer>
-        </DialogContainer>        
-        {!visible && !register && <Login/>}  
-        {!visible && register && <Register/>}
-        </div>
+            <DialogContainer
+              id="navigation-drawer-demo"
+              aria-label="Navigation Drawer Demo"
+              visible={visible}
+              fullPage
+              focusOnMount={false}
+              onShow={this.handleShow}
+              onHide={this.hide}
+            >
+              <NavigationDrawer
+                renderNode={renderNode}
+                drawerTitle="Tracker"
+                toolbarTitle="Welcome to SureTouch"
+                toolbarActions={<Button flat style={{ marginTop: '22px' }} onClick={this.handleClick}>logout</Button>}
+                navItems={navItems.map(props => <NavLink {...props} key={props.to} />)}
+              >
+                <Provider store={store}>
+                  <Switch key={location.key}>
+                    {/* <Route exact path="/" location={location} component={Home} /> */}
+                    <Route exact path="/" location={location} component={LogContainer} />
+                    <Route path="/locations" location={location} component={SensorsList} />
+                    <Route path="/logs" location={location} component={LogContainer} />
+                    <Route path="/macs" location={location} component={MacContainer} />
+                    <Route path="/visitors" location={location} component={Visitors} />
+                    <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
+                    <Route path="/duration" location={location} component={Duration} />
+                  </Switch>
+                </Provider>
+              </NavigationDrawer>
+            </DialogContainer>
+            {!visible && <Switch key={location.key}>
+              <Route path="/login" location={location} component={Login} />
+              <Route path="/register" location={location} component={Register} />
+            </Switch>}
+          </div>
         )}
       />
     );

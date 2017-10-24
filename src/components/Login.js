@@ -6,9 +6,11 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Notifications from 'react-notify-toast';
+import createHistory from 'history/createBrowserHistory'
 import {
   validateLogin
 } from '../actions'
+const history = createHistory();
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -23,8 +25,8 @@ class Login extends Component {
 
   componentDidMount() {
     if (localStorage.getItem("redirect") !== undefined && localStorage.getItem("redirect") !== null){
-      this.props.history.push(localStorage.getItem("redirect"));
-      this.props.history.push('/logs');
+      history.push(localStorage.getItem("redirect"));
+      history.push('/logs');
       window.location.replace('/logs')
       window.location.assign('/logs')
       window.location.href = '/logs'

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Button, NavigationDrawer } from 'react-md';
+import { Button, NavigationDrawer, DialogContainer } from 'react-md';
 import NavLink from '../NavLink';
 import configureStore from '../configureStore'
 import { Provider } from 'react-redux';
@@ -13,6 +13,8 @@ import MacContainer from './MacContainer';
 import Visitors from './Visitors';
 import UniqueVisitors from './UniqueVisitors'
 import Duration from './Duration'
+import Login from './Login'
+import Register from './Register'
 
 const history = createHistory();
 const store = configureStore();
@@ -55,6 +57,26 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this);
+    if(window.location.pathname === "/login"){
+      this.state = {
+        visible: false, 
+        register:false,
+        renderNode: null 
+      }
+    }
+    else if (window.location.pathname === "/register"){
+      this.state = {
+        visible: false, 
+        register:true,
+        renderNode: null 
+      }
+    }
+    else{
+      this.state = {
+        visible: true, 
+        renderNode: null 
+      }
+    }
   }
 
   handleClick(e) {
@@ -66,10 +88,22 @@ class App extends Component {
   }
 
   render() {
+    const { visible, renderNode, register } = this.state;
     return (
       <Route
         render={({ location }) => (
+          <div>
+        <DialogContainer
+          id="navigation-drawer-demo"
+          aria-label="Navigation Drawer Demo"
+          visible={visible}
+          fullPage
+          focusOnMount={false}
+          onShow={this.handleShow}
+          onHide={this.hide}
+        >
           <NavigationDrawer
+            renderNode={renderNode}
             drawerTitle="Tracker"
             toolbarTitle="Welcome to SureTouch"
             toolbarActions={<Button flat style={{ marginTop: '22px' }} onClick={this.handleClick}>logout</Button>}
@@ -88,6 +122,10 @@ class App extends Component {
               </Switch>
             </Provider>
           </NavigationDrawer>
+        </DialogContainer>        
+        {!visible && !register && <Login/>}  
+        {!visible && register && <Register/>}
+        </div>
         )}
       />
     );

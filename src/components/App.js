@@ -57,8 +57,10 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this);
-    console.log('state',window.location.pathname);
-    if(window.location.pathname.includes("register") || window.location.pathname.includes("login") ){
+    console.log('window : ' + window.location.pathname, window.location.hostname);
+    console.log('history : ' +history.location.pathname);
+    if(window.location.pathname.includes("register") || window.location.pathname.includes("login")
+    || history.location.pathname.includes("register")  || history.location.pathname.includes("login")){
       this.state = {
         visible: false,
         renderNode: null

@@ -15,6 +15,7 @@ import UniqueVisitors from './UniqueVisitors'
 import Duration from './Duration'
 import Login from './Login'
 import Register from './Register'
+import Chart from './Chart'
 
 const history = createHistory();
 const store = configureStore();
@@ -51,6 +52,10 @@ const navItems =
       label: 'Duration',
       to: '/duration',
       icon: 'av_timer',
+    }, {
+      label: 'Charts',
+      to: '/charts',
+      icon: 'show_chart',
     },];
 
 class App extends Component {
@@ -114,6 +119,7 @@ class App extends Component {
                     <Route path="/visitors" location={location} component={Visitors} />
                     <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
                     <Route path="/duration" location={location} component={Duration} />
+                    <Route path="/charts" location={location} component={Chart} />
                   </Switch>
                 </Provider>
               </NavigationDrawer>

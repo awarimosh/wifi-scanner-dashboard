@@ -149,13 +149,11 @@ class Duration extends Component {
                 <div style={{
                     margin: '10px'
                 }}>
-
-                    {isFetching && duration.length === 0 && <Lottie options={defaultOptions}
-                        height={400}
-                        width={400}
-                        isStopped={this.state.isStopped}
-                        isPaused={this.state.isPaused} />}
-                    {!isFetching && !didInvalidate && !this.state.ready && <h2>Fetching...</h2>}
+ 
+                    {isFetching && duration.length === 0 &&
+                        <Lottie options={defaultOptions} height={400} width={400} />}
+                    {!isFetching && !didInvalidate && !this.state.ready &&
+                        <Lottie options={defaultOptions} height={400} width={400} />}
                     {!isFetching && !didInvalidate && this.state.ready &&
                         <DataRow data={duration} isFetching={isFetching} />}
                 </div>

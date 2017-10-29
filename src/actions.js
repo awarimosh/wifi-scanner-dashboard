@@ -28,6 +28,9 @@ export const RECEIVE_DURATION = 'RECEIVE_DURATION'
 
 export const RECEIVE_USER = 'RECEIVE_USER'
 
+export const REQUEST_CHART_DATA = 'REQUEST_CHART_DATA'
+export const RECEIVE_CHART_DATA = 'RECEIVE_CHART_DATA'
+
 const history = createHistory()
 
 // const baseURL = "http://localhost:3030";
@@ -383,6 +386,50 @@ export function fetchDurationIfNeeded(suburl, value) {
   return (dispatch, getState) => {
     if (shouldFetchDuration(getState(), suburl)) {
       return dispatch(fetchDuration(suburl, value))
+    }
+  }
+}
+
+////// Chart
+function receiveChartData(suburl, json) {
+  var obj = {
+    type: RECEIVE_CHART_DATA,
+    suburl,
+    chartData: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchChartData(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.date = new Date().toLocaleDateString();
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/macs/hourChart?sensors=${value.sensors}&date=${value.date}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveChartData(suburl, json.response)))
+  }
+}
+
+function shouldFetchChartData(state, suburl) {
+  const chartData = state.postsBySuburl[suburl]
+  if (!chartData) {
+    return true
+  } else if (chartData.isFetching) {
+    return false
+  } else {
+    return chartData.didInvalidate
+  }
+}
+
+export function fetchChartDataIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    if (shouldFetchChartData(getState(), suburl)) {
+      return dispatch(fetchChartData(suburl, value))
     }
   }
 }

@@ -37,7 +37,7 @@ class Register extends Component {
                         <AppBar
                             title="Register"
                         />
-                        <div style={divStyle}>
+                        <div style={divStyle} className="md-cell--4">
                             <TextField
                                 hintText="Enter your First Name"
                                 floatingLabelText="First Name"
@@ -74,9 +74,9 @@ class Register extends Component {
 }
 const divStyle = {
     margin: 'auto',
-    width: '25%',
-    padding: '10px'
-};
+    padding: '10px',
+    display: 'block',
+  };
 
 const buttonStyle = {
     position: 'absolute',

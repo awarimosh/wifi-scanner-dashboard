@@ -95,7 +95,7 @@ class Visitors extends Component {
         });
         const { dispatch } = this.props
         var values = {
-            sensors: this.state.sensorIDs,
+            sensors: this.state.sensors,
             week: data.week,
             year: data.year
         }

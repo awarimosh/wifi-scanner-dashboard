@@ -64,7 +64,7 @@ class Login extends Component {
             <AppBar
               title="Login"
             />
-            <div style={divStyle}>
+            <div className="md-cell--4" style={divStyle}>
               <TextField
                 type="email"
                 hintText="Enter your Email"
@@ -91,8 +91,8 @@ class Login extends Component {
 
 const divStyle = {
   margin: 'auto',
-  width: '25%',
-  padding: '10px'
+  padding: '10px',
+  display: 'block',
 };
 
 const buttonStyle = {

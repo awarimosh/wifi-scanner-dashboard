@@ -15,7 +15,7 @@ import UniqueVisitors from './UniqueVisitors'
 import Duration from './Duration'
 import Login from './Login'
 import Register from './Register'
-import Chart from './Chart'
+import Dashboard from './Chart'
 
 const history = createHistory();
 const store = configureStore();
@@ -29,34 +29,35 @@ const navItems =
     //   icon: 'home',
     // }, 
     {
-      label: 'Logs',
-      to: '/logs',
-      icon: 'history',
-    }, {
-      label: 'Macs',
-      to: '/macs',
-      icon: 'fingerprint',
-    }, {
+      label: 'Dashboard',
+      to: '/',
+      icon: 'show_chart',
+    },
+    {
+    //   label: 'Logs',
+    //   to: '/logs',
+    //   icon: 'history',
+    // }, {
+    //   label: 'Macs',
+    //   to: '/macs',
+    //   icon: 'fingerprint',
+    // }, {
       label: 'Locations',
       to: '/locations',
       icon: 'add_location',
     }, {
-      label: 'Visitors',
+      label: 'Customers',
       to: '/visitors',
       icon: 'group',
     }, {
-      label: 'Unique Visitors',
+      label: 'New Cutomers',
       to: '/uniqueVisitors',
       icon: 'person_pin',
     }, {
       label: 'Duration',
       to: '/duration',
       icon: 'av_timer',
-    }, {
-      label: 'Charts',
-      to: '/charts',
-      icon: 'show_chart',
-    },];
+    }, ];
 
 class App extends Component {
   constructor(props) {
@@ -111,15 +112,14 @@ class App extends Component {
               >
                 <Provider store={store}>
                   <Switch key={location.key}>
-                    {/* <Route exact path="/" location={location} component={Home} /> */}
-                    <Route exact path="/" location={location} component={LogContainer} />
+                    <Route exact path="/" location={location} component={Dashboard} />
                     <Route path="/locations" location={location} component={SensorsList} />
                     <Route path="/logs" location={location} component={LogContainer} />
                     <Route path="/macs" location={location} component={MacContainer} />
                     <Route path="/visitors" location={location} component={Visitors} />
                     <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
                     <Route path="/duration" location={location} component={Duration} />
-                    <Route path="/charts" location={location} component={Chart} />
+                    {/* <Route path="/charts" location={location} component={Chart} /> */}
                   </Switch>
                 </Provider>
               </NavigationDrawer>

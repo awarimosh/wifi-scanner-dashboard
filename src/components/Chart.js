@@ -120,20 +120,23 @@ class Chart extends Component {
                 {!isFetching && !didInvalidate && !this.state.ready &&
                     <Lottie options={defaultOptions} height={400} width={400} />}
                 {!isFetching && !didInvalidate && this.state.ready &&
-                    <LineChart width={600} height={300} data={chartData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Legend />
-                        {sensors.some(sensor => sensor.ID.toString() === "2843") &&
-                            <Line type="monotone" dataKey="2843" stroke="#8884d8" />}
-                        {sensors.some(sensor => sensor.ID.toString() === "2844") &&
-                            <Line type="monotone" dataKey="2844" stroke="#82ca9d" />}
-                        {sensors.some(sensor => sensor.ID.toString() === "2845") &&
-                            <Line type="monotone" dataKey="2845" stroke="#8479d4" />}
-                    </LineChart>}
+                    <div>
+                        <h3 style={{marginLeft:'40px'}}>Customer Daily Chart</h3>
+                        <LineChart width={600} height={300} data={chartData}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <Tooltip />
+                            <Legend />
+                            {sensors.some(sensor => sensor.ID.toString() === "2843") &&
+                                <Line type="monotone" dataKey="2843" stroke="#8884d8" />}
+                            {sensors.some(sensor => sensor.ID.toString() === "2844") &&
+                                <Line type="monotone" dataKey="2844" stroke="#82ca9d" />}
+                            {sensors.some(sensor => sensor.ID.toString() === "2845") &&
+                                <Line type="monotone" dataKey="2845" stroke="#8479d4" />}
+                        </LineChart>
+                    </div>}
             </div>
         );
     }

@@ -9,7 +9,7 @@ import DataColumn from './DataColumn'
 export default class DataRow extends Component {
     render() {
         const divStyle1 = {
-            display: 'inline-block', width: '65px', marginLeft: 'auto', marginRight: 'auto', whiteSpace: 'normal', textAlign: 'center'
+            display: 'inline-block', width: '100%', marginLeft: 'auto', marginRight: 'auto', whiteSpace: 'normal'
         }
         const { isFetching, data } = this.props
         const thisweek = isFetching === true ? [] : data.thisweek;
@@ -18,11 +18,11 @@ export default class DataRow extends Component {
         const rows = thisweek.map((_, i) => (
             <TableRow key={i} style={{
             }}>
-                <TableColumn >{thisweek[i].sensorID}</TableColumn>
-                <div style={{borderLeft: 'medium #C54B03 solid', marginRight: '50px',height: '100px'}} />
-                <TableColumn>
+                <TableColumn style={{width : '100%'}} >{thisweek[i].sensorID}</TableColumn>
+                <TableColumn >
                     {thisweek[i].data}
                 </TableColumn>
+                <div style={{borderLeft: 'medium #C54B03 solid', marginRight: '50px',height: '100px'}} />
                 <TableColumn>
                     <DataColumn current={thisweek[i].data} noncurrent={lastweek[i].data} />                    
                 </TableColumn>
@@ -51,8 +51,8 @@ export default class DataRow extends Component {
                     <TableHeader>
                         <TableRow>
                             <TableColumn><span style={divStyle1}>Average (per sensor)</span></TableColumn>
-                            <div style={{borderLeft: 'medium #C54B03 solid', marginRight: '50px',height: '70px'}} />
                             <TableColumn >{getAverage(thisweek)}</TableColumn>
+                            <div style={{borderLeft: 'medium #C54B03 solid', marginRight: '50px',height: '70px'}} />
                             <TableColumn style={{paddingLeft: '50px'}}>{getAverage(lastweek)}</TableColumn>
                             <TableColumn style={{paddingLeft: '50px'}}>{getAverage(nextweek)}</TableColumn>
                         </TableRow>

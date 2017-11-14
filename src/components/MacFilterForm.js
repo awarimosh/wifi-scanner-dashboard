@@ -194,7 +194,7 @@ class MacFilterForm extends Component {
                     {!isFetching && !didInvalidate && !this.state.ready && 
                     <Lottie options={defaultOptions} height={400} width={400} />}
                     {!isFetching && !didInvalidate && this.state.ready &&
-                        <Mac macs={getCurrent(macs, this.state)} />}
+                        <Mac macs={getCurrent(macs, this.state).length > 100 ? getCurrent(macs.slice(0,99), this.state) : macs} />}
                 </div>
             </div>
         );

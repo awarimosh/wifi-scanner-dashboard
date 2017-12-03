@@ -33,8 +33,8 @@ export const RECEIVE_CHART_DATA = 'RECEIVE_CHART_DATA'
 
 const history = createHistory()
 
-// const baseURL = "http://localhost:3030";
-const baseURL = "http://128.199.154.60:3030";
+const baseURL = "http://localhost:3030";
+// const baseURL = "http://128.199.154.60:3030";
 
 function requestSuburl(suburl, type) {
   switch (type) {
@@ -145,6 +145,7 @@ export function validateLogin(payload) {
       if (typeof (Storage) !== "undefined") {
         localStorage.setItem("validated", res.response.success);
         localStorage.setItem("user", JSON.stringify(res.response.result));
+        localStorage.setItem("admin", res.response.result.admin);
         res.response.success === true ? localStorage.setItem("redirect", 'logs') : console.error("not redirected");
         res.response.success === true ? history.replace('logs') : console.error("not redirected");
         res.response.success === true ? history.push('logs') : console.error("not redirected");
@@ -256,15 +257,31 @@ export function fetchMacsIfNeeded(suburl, value) {
 }
 
 ////// visitors
-function receiveVisitors(suburl, json) {
+function receiveVisitors(suburl, json, week) {
   var obj = {
     type: RECEIVE_VISITORS,
     suburl,
     visitors: json,
+    week : week,
     receivedAt: Date.now()
   }
   return obj;
 }
+
+/*function fetchVisitors(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.week = 37;
+    value.year = 2017;
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/visitors/?sensors=${value.sensors}&week=${value.week}&year=${value.year}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveVisitors(suburl, json.response)))
+  }
+}*/
 
 function fetchVisitors(suburl, value) {
   if (value === undefined) {
@@ -277,7 +294,7 @@ function fetchVisitors(suburl, value) {
     dispatch(requestSuburl(suburl))
     return fetch(`${baseURL}/visitors/?sensors=${value.sensors}&week=${value.week}&year=${value.year}`)
       .then(response => response.json())
-      .then(json => dispatch(receiveVisitors(suburl, json.response)))
+      .then(json => dispatch(receiveVisitors(suburl, json.response, value.week)))
   }
 }
 

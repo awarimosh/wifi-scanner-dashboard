@@ -24,7 +24,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    if (localStorage.getItem("redirect") !== undefined && localStorage.getItem("redirect") !== null){
+    if (localStorage.getItem("redirect") !== undefined && localStorage.getItem("redirect") !== null) {
       history.push(localStorage.getItem("redirect"));
       history.push('/logs');
       window.location.replace('/logs')

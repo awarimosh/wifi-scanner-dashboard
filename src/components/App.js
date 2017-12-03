@@ -20,7 +20,7 @@ import Dashboard from './Chart'
 const history = createHistory();
 const store = configureStore();
 
-const navItems =
+var navItems =
   [
     //   {
     //   exact: true,
@@ -29,19 +29,12 @@ const navItems =
     //   icon: 'home',
     // }, 
     {
+      exact: true,
       label: 'Dashboard',
       to: '/',
       icon: 'show_chart',
     },
     {
-    //   label: 'Logs',
-    //   to: '/logs',
-    //   icon: 'history',
-    // }, {
-    //   label: 'Macs',
-    //   to: '/macs',
-    //   icon: 'fingerprint',
-    // }, {
       label: 'Locations',
       to: '/locations',
       icon: 'add_location',
@@ -57,27 +50,26 @@ const navItems =
       label: 'Duration',
       to: '/duration',
       icon: 'av_timer',
-    }, ];
+    },];
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this);
     console.log('window : ' + window.location.pathname, window.location.hostname);
-    console.log('history : ' +history.location.pathname);
-    if(window.location.pathname.includes("register") || window.location.pathname.includes("login")
-    || history.location.pathname.includes("register")  || history.location.pathname.includes("login")){
+    console.log('history : ' + history.location.pathname);
+    if (window.location.pathname.includes("register") || window.location.pathname.includes("login")
+      || history.location.pathname.includes("register") || history.location.pathname.includes("login")) {
       this.state = {
         visible: false,
         renderNode: null
       }
-    }else{
+    } else {
       this.state = {
         visible: true,
         renderNode: null
       }
     }
-
   }
 
   handleClick(e) {
@@ -119,7 +111,7 @@ class App extends Component {
                     <Route path="/visitors" location={location} component={Visitors} />
                     <Route path="/uniqueVisitors" location={location} component={UniqueVisitors} />
                     <Route path="/duration" location={location} component={Duration} />
-                    {/* <Route path="/charts" location={location} component={Chart} /> */}
+                    <Route path="/charts" location={location} component={Dashboard} />
                   </Switch>
                 </Provider>
               </NavigationDrawer>

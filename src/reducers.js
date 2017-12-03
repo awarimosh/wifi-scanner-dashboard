@@ -177,6 +177,7 @@ function data(
         isFetching: false,
         didInvalidate: false,
         items: action.visitors,
+        week: action.week,
         lastUpdated: action.receivedAt
       })
       return obj

@@ -11,6 +11,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 
 import { DateRange } from 'react-date-range';
 import { Button, Collapse } from 'react-md';
+import createHistory from 'history/createBrowserHistory'
+
+const history = createHistory();
 
 class DayChart extends Component {
     constructor(props) {
@@ -30,8 +33,10 @@ class DayChart extends Component {
         const { dispatch } = this.props;
         dispatch(invalidateSuburl('sensors'));
         dispatch(fetchSensorsIfNeeded('sensors'));
-        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
-            this.props.history.push('login');
+        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null) {
+            history.push('/login');
+            window.location.reload();
+        }
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID
@@ -118,7 +123,7 @@ class DayChart extends Component {
         return (
             <div>
                 <div className="md-grid">
-                    <div className="md-cell--10"  style={{ marginBottom : '70px'}}>
+                    <div className="md-cell--10" style={{ marginBottom: '70px' }}>
                         <Button flat primary iconBefore={false} iconChildren="date_range" onClick={this.toggle}>Select Date Range</Button>
                         <Collapse collapsed={collapsed}>
                             <DateRange

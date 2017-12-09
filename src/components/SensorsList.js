@@ -8,6 +8,9 @@ import {
 import Sensors from './Sensors'
 import SensorForm from './SensorForm'
 import MapContainer from './MapContainer'
+import createHistory from 'history/createBrowserHistory'
+
+const history = createHistory();
 
 class SensorsList extends Component {
   constructor(props) {
@@ -19,8 +22,10 @@ class SensorsList extends Component {
   componentDidMount() {
     const { dispatch, selectedSuburl } = this.props;
     dispatch(fetchSensorsIfNeeded(selectedSuburl));
-    if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
-      this.props.history.push('login');
+    if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null) {
+        history.push('/login');
+        window.location.reload();
+    }
   }
 
   componentDidUpdate(prevProps) {

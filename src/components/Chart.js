@@ -9,6 +9,9 @@ import {
 import { DatePicker } from 'react-md';
 import * as animationData from '../animations/loader-success-failed.json'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import createHistory from 'history/createBrowserHistory'
+
+const history = createHistory();
 
 class Chart extends Component {
     constructor(props) {
@@ -26,8 +29,10 @@ class Chart extends Component {
         const { dispatch } = this.props;
         dispatch(invalidateSuburl('sensors'));
         dispatch(fetchSensorsIfNeeded('sensors'));
-        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
-            this.props.history.push('login');
+        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null) {
+            history.push('/login');
+            window.location.reload();
+        }
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID

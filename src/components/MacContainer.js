@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import MacFilterForm from './MacFilterForm'
+import createHistory from 'history/createBrowserHistory'
+
+const history = createHistory();
 
 class MacContainer extends Component {
   componentDidMount() {
-    var validated = localStorage.getItem("validated");
-    if  (validated === undefined || validated === null || validated === false)
-      this.props.history.push('login');
+    if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null) {
+        history.push('/login');
+        window.location.reload();
+    }
     else {
       // console.log('validated',validated);
     }

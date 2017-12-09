@@ -12,6 +12,9 @@ import DataRow from './DataRow'
 import * as animationData from '../animations/building.json'
 
 import moment from 'moment';
+import createHistory from 'history/createBrowserHistory'
+
+const history = createHistory();
 const now = moment();
 const format = 'YYYY-Wo';
 
@@ -29,9 +32,11 @@ class UniqueVisitors extends Component {
 
     componentDidMount() {
         const { dispatch } = this.props;
-        dispatch(fetchSensorsIfNeeded('sensors'));
-        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null)
-            this.props.history.push('login');
+        dispatch(fetchSensorsIfNeeded('sensors')); 
+        if (localStorage.getItem("validated") === undefined || localStorage.getItem("validated") === null) {
+            history.push('/login');
+            window.location.reload();
+        }
         if (this.props.sensors.length > 0 && this.state.week !== undefined && this.state.year !== undefined) {
             var sensorIDs = this.props.sensors.map((sensor) => {
                 return sensor.ID

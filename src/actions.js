@@ -31,10 +31,13 @@ export const RECEIVE_USER = 'RECEIVE_USER'
 export const REQUEST_CHART_DATA = 'REQUEST_CHART_DATA'
 export const RECEIVE_CHART_DATA = 'RECEIVE_CHART_DATA'
 
+export const REQUEST_CHART_DAY_DATA = 'REQUEST_CHART_DAY_DATA'
+export const RECEIVE_CHART_DAY_DATA = 'RECEIVE_CHART_DAY_DATA'
+
 const history = createHistory()
 
-const baseURL = "http://localhost:3030";
-// const baseURL = "http://128.199.154.60:3030";
+// const baseURL = "http://localhost:3030";
+const baseURL = "http://128.199.154.60:3030";
 
 function requestSuburl(suburl, type) {
   switch (type) {
@@ -447,6 +450,51 @@ export function fetchChartDataIfNeeded(suburl, value) {
   return (dispatch, getState) => {
     if (shouldFetchChartData(getState(), suburl)) {
       return dispatch(fetchChartData(suburl, value))
+    }
+  }
+}
+
+////// Chart Day
+function receiveChartDayData(suburl, json) {
+  var obj = {
+    type: RECEIVE_CHART_DAY_DATA,
+    suburl,
+    chartDayData: json,
+    receivedAt: Date.now()
+  }
+  return obj;
+}
+
+function fetchChartDayData(suburl, value) {
+  if (value === undefined) {
+    value = {};
+    value.sensors = 2844;
+    value.startDate = new Date().toLocaleDateString();
+    value.endDate = new Date().toLocaleDateString();
+  }
+  return dispatch => {
+    dispatch(requestSuburl(suburl))
+    return fetch(`${baseURL}/macs/dayChart?sensors=${value.sensors}&startDate=${value.startDate}&endDate=${value.endDate}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveChartDayData(suburl, json.response)))
+  }
+}
+
+function shouldFetchChartDayData(state, suburl) {
+  const chartDayData = state.postsBySuburl[suburl]
+  if (!chartDayData) {
+    return true
+  } else if (chartDayData.isFetching) {
+    return false
+  } else {
+    return chartDayData.didInvalidate
+  }
+}
+
+export function fetchChartDayDataIfNeeded(suburl, value) {
+  return (dispatch, getState) => {
+    if (shouldFetchChartDayData(getState(), suburl)) {
+      return dispatch(fetchChartDayData(suburl, value))
     }
   }
 }

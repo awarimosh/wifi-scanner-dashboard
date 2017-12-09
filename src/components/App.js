@@ -15,7 +15,7 @@ import UniqueVisitors from './UniqueVisitors'
 import Duration from './Duration'
 import Login from './Login'
 import Register from './Register'
-import Dashboard from './Chart'
+import Dashboard from './Dashboard'
 
 const history = createHistory();
 const store = configureStore();

@@ -18,6 +18,8 @@ import {
   RECEIVE_USER,
   REQUEST_CHART_DATA,
   RECEIVE_CHART_DATA,
+  REQUEST_CHART_DAY_DATA,
+  RECEIVE_CHART_DAY_DATA,
   SELECT_SUBURL
 } from './actions'
 
@@ -63,7 +65,7 @@ function selectedSuburl(state = 'reactjs', action) {
       return action.suburl
     case RECEIVE_DURATION:
       action.suburl = "duration";
-      return action.suburl      
+      return action.suburl
     case RECEIVE_USER:
       action.suburl = "user";
       return action.suburl
@@ -72,6 +74,12 @@ function selectedSuburl(state = 'reactjs', action) {
       return action.suburl
     case RECEIVE_CHART_DATA:
       action.suburl = "hourChart";
+      return action.suburl
+    case REQUEST_CHART_DAY_DATA:
+      action.suburl = "dayChart";
+      return action.suburl
+    case RECEIVE_CHART_DAY_DATA:
+      action.suburl = "dayChart";
       return action.suburl
     default:
       return state
@@ -223,6 +231,14 @@ function data(
         lastUpdated: action.receivedAt
       })
       return obj
+    case RECEIVE_CHART_DAY_DATA:
+      obj = Object.assign(state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.chartDayData,
+        lastUpdated: action.receivedAt
+      })
+      return obj
     default:
       return state
   }
@@ -281,6 +297,11 @@ function postsBySuburl(state = {}, action) {
       })
     case REQUEST_CHART_DATA:
     case RECEIVE_CHART_DATA:
+      return Object.assign({}, state, {
+        [action.suburl]: data(state[action.suburl], action)
+      })
+    case REQUEST_CHART_DAY_DATA:
+    case RECEIVE_CHART_DAY_DATA:
       return Object.assign({}, state, {
         [action.suburl]: data(state[action.suburl], action)
       })
